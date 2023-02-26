@@ -274,7 +274,42 @@ class usernEntry(ck.CTkEntry):
             placeholder_text = text,
             fg_color = fl025,
             corner_radius = 10,
+            border_color = fl1,
             **kwargs
+            )
+        # set focus to be false
+        self.qFocus = False
+        # bind focus in and out
+        self.bind('<FocusIn>', self.onFocus)
+        self.bind('<FocusOut>', self.offFocus)
+        # bind on mouse hover and out, mEnter = mouse enter
+        self.bind('<Enter>', self.mEnter)
+        self.bind('<Leave>', self.mExit)
+    def onFocus(self, event):
+        self.configure(
+            border_color = accent,
+            fg_color = fl1
+            )
+        # variable used to make sure hover doesnt affect focus
+        self.qFocus = True
+    def offFocus(self, event):
+        self.configure(
+            border_color = fl1,
+            fg_color = fl025
+            )
+        self.qFocus = False
+    def mEnter(self, event):
+        # check to make sure widget is not focused
+        if not self.qFocus:
+            self.configure(
+                border_color  = al1,
+                fg_color = fl1
+            )
+    def mExit(self, event):
+        if not self.qFocus:
+            self.configure(
+                border_color = fl1,
+                fg_color = fl025
             )
 
 qWelcome = welcome()
