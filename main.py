@@ -9,13 +9,13 @@ import json as j
 prgName = "Quizzer"
 
 # setting empty variables as colours to avoid problems in VSC
-accent = '#9747FF'
-pBG = '#1B1B1B'
-pFG = '#FFFFFF'
-fl025 = '#262626'
-fl1 = '#373737'
-fl2 = '#585858'
-al1 = '#AE98CB'
+accent = ''
+pBG = ''
+pFG = ''
+fl025 = ''
+fl1 = ''
+fl2 = ''
+al1 = ''
 
 class colourScheme:
     def __init__(self, dir):
@@ -69,10 +69,16 @@ colours = colourScheme('data/scheme.json')
 
 # make sure that programming is using the correct directory
 # os.chdir(os.path.abspath(os.path.dirname(__file__)))
-# creates sidebar used for mainpage
-class sidebar(tk.Frame):
+# creates sidebar used for mainpageimage.png
+class sidebar(ck.CTkFrame):
     def __init__(self,master, width, backg, foreg):
-        tk.Frame.__init__(self,master, bg = backg, width = width)
+        ck.CTkFrame.__init__(
+            self,
+            master,
+            fg_color = backg,
+            width = width,
+            corner_radius = 15
+            )
         userLabel = tk.Label(
             self,
             text = client.username,
@@ -99,7 +105,7 @@ class sidebar(tk.Frame):
                     font = sidebarFont[1],
                     anchor = 'w',
                     corner_radius = 10,
-                    height = 40
+                    height = 35
                     )
             )
             #add button
