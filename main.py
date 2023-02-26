@@ -9,13 +9,13 @@ import json as j
 prgName = "Quizzer"
 
 # setting empty variables as colours to avoid problems in VSC
-accent = ''
-pBG = ''
-pFG = ''
-fl025 = ''
-fl1 = ''
-fl2 = ''
-al1 = ''
+accent = '#9747FF'
+pBG = '#1B1B1B'
+pFG = '#FFFFFF'
+fl025 = '#262626'
+fl1 = '#373737'
+fl2 = '#585858'
+al1 = '#AE98CB'
 
 class colourScheme:
     def __init__(self, dir):
@@ -50,8 +50,13 @@ class colourScheme:
                     if not self.validity:
                         self.createDefault()
     def createDefault(self):
-        with open(self.dir,'w+') as schemeFile:
-            schemeFile.write(j.dumps(self.default, indent = 4))
+        # this creates a default schemes.json file
+        try:
+            with open(self.dir,'w+') as schemeFile:
+                schemeFile.write(j.dumps(self.default, indent = 4))
+        except Exception as e:
+            # if self.dir does not exist (e.g. first startup) it may fail to create scheme file.
+            print('Could create default scheme file at', self.dir, '\nError:', e)
         self.scheme = self.default
     def validity(self):
         for key in self.default:
