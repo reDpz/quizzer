@@ -73,6 +73,27 @@ class quiz():
         )
         return self.cursor.fetchone()[0]
         
+    # returns true if all index(s) are present else false
+    def validLen(self):
+        # initiate loop that will repeat for every qNum entry
+        for i in range (1, self.length() + 1):
+            # get index
+            self.cursor.execute(
+                f"""
+                SELECT qNum
+                FROM quiz
+                WHERE qNum = {i}
+                """
+            )
+            # check contents of index, if index returns 0 it means qNum does not exist.
+            # quizzes start with index of 1 instead of 0 to avoid possible conflict
+            if self.cursor.fetchone()[0] == 0:
+                # this means index does not exist so take early exit
+                return False
+            # iterate entire database
+        # after its done iterating with no errors
+        return True
+
     def fetchSingle(self, target, row):
         self.cursor.execute("""SELECT {}
         FROM quiz
@@ -81,15 +102,19 @@ class quiz():
 
 
 compSci = quiz('compSci')
-# compSci.add(1, '"Test question"', '"[option1,option2,option3]"', 1, 0)
 # compSci.delete(1)
-# compSci.add(2, '"Test question"', '"[option1,option2,option3]"', 1, 0)
-# compSci.delete(1)
-# compSci.results()
-# compSci.add(1, '"Which one of these affects CPU performane"',
-#             '"[Clock Speed, Cache, Core Count, All of the above]"', 3, 0)
+# compSci.add(90,
+#             '"Invalid"',
+#             '"[Invalid]"',
+#             3,
+#             0
+#             )
 # print(compSci.ask(1))
 # print(compSci.options(1))
 # answer = int(input('Enter answer: '))
 # print(compSci.answer(answer, 1))
+
+# print length
 print(compSci.length())
+# print validity
+print(compSci.validLen())
