@@ -89,10 +89,10 @@ class quiz():
                 WHERE qNum = {i}
                 """
             )
-            # check contents of index, if index returns 'None' it means qNum does not exist
-            if self.cursor.fetchone()[0] != None:
+            # check contents of index, if index returns 'None' it means qNum does not exist.
+            if self.cursor.fetchone() == None:
                 # this means index does not exist so take early exit
-                return True
+                return False
             # iterate until invalid entry is found
         # after its done iterating with no errors
         return True
@@ -105,7 +105,7 @@ class quiz():
 
 
 compSci = quiz('compSci')
-# compSci.delete(1)
+# compSci.delete(90)
 # compSci.add(90,
 #             '"Invalid"',
 #             '"[Invalid]"',
