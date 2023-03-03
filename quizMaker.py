@@ -75,9 +75,13 @@ class quiz():
         
     # returns true if all index(s) are present else false
     def validLen(self):
-        # initiate loop that will repeat for every qNum entry
-        for i in range (1, self.length() + 1):
-            # get index
+        # Initiate loop that will repeat for every qNum entry.
+        # The loop is going backwards as this way it will result in the fastest detection of
+        # an empty entry.
+        for i in range (self.length() - 1, 0, -1):
+            # Start from index lower than highest index
+            # because we know that the highest index must exist.
+            # Get index
             self.cursor.execute(
                 f"""
                 SELECT qNum
@@ -85,12 +89,11 @@ class quiz():
                 WHERE qNum = {i}
                 """
             )
-            # check contents of index, if index returns 0 it means qNum does not exist.
-            # quizzes start with index of 1 instead of 0 to avoid possible conflict
-            if self.cursor.fetchone()[0] == 0:
+            # check contents of index, if index returns 'None' it means qNum does not exist
+            if self.cursor.fetchone()[0] != None:
                 # this means index does not exist so take early exit
-                return False
-            # iterate entire database
+                return True
+            # iterate until invalid entry is found
         # after its done iterating with no errors
         return True
 
