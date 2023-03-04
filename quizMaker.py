@@ -103,6 +103,8 @@ class quiz():
         WHERE qNum = {}""".format(target, row))
         return self.cursor.fetchone()[0]
 
+# interface for quizzes
+
 
 compSci = quiz('compSci')
 # compSci.delete(90)
@@ -118,6 +120,6 @@ compSci = quiz('compSci')
 # print(compSci.answer(answer, 1))
 
 # print length
-print(compSci.length())
+# print(compSci.length())
 # print validity
-print(compSci.validLen())
+# print(compSci.validLen())

@@ -149,7 +149,6 @@ class lmtdFld(tk.Entry):
             # print('max length reached') debug
             maxLenPrompt.set('Username may not contain more than 16 characters')
 
-
 # executed when the program is opened
 def onstart():
     global user
@@ -312,7 +311,14 @@ class usernEntry(ck.CTkEntry):
                 fg_color = fl025
             )
 
-qWelcome = welcome()
+# Right arrow button
+class arrowBtn(ck.CTkButton):
+    # w = width, h = height
+    def __init__(self, *, w=None, h=None, **kwargs):
+        ck.CTkButton.__init__(self, kwargs)
+        
+        
+# qWelcome = welcome()
 def enterUser():
     global maxLenPrompt  # this variable is the prompt that the user
     # receives when they attempt to enter more
@@ -432,4 +438,4 @@ def mainpage():
 
 
 # mainpage()
-onstart()
+# onstart()
