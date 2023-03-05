@@ -149,7 +149,6 @@ class lmtdFld(tk.Entry):
             # print('max length reached') debug
             maxLenPrompt.set('Username may not contain more than 16 characters')
 
-
 # executed when the program is opened
 def onstart():
     global user
@@ -226,7 +225,100 @@ def usernameValidate(self, var):
             "Ok"
         )
 
+class welcome(ck.CTk):
+    def __init__(self):
+        super().__init__(fg_color = pBG)
+        self.titleFont = ck.CTkFont(
+            'Poppins',
+            60,
+            'bold'
+        )
+        self.entryFont = ck.CTkFont(
+            'Montserrat',
+            15,
+            'normal'
+        )
+        self.geometry("500x300")
+        self.resizable(False, False)
+        self.title("Welcome - " + prgName)
+        # add title
+        self.qTitle()
+        # add user entry field
+        self.userEntry = usernEntry(
+            self,
+            'Username',
+            font = self.entryFont,
+            width = 200
+            )
+        self.userEntry.pack(ipady = 5)
+        # stop window from closing
+        self.mainloop()
+    def qTitle(self):
+        # title label with the program name.
+        self.titleLabel = ck.CTkLabel(
+            self,
+            text = prgName,
+            fg_color = pBG,
+            font = self.titleFont,
+            text_color = pFG
+        )
+        self.titleLabel.pack(pady = 10)
+        
+# username entry
+class usernEntry(ck.CTkEntry):
+    def __init__(self, master, text, **kwargs):
+        ck.CTkEntry.__init__(
+            self,
+            master,
+            placeholder_text = text,
+            fg_color = fl025,
+            corner_radius = 10,
+            border_color = fl1,
+            **kwargs
+            )
+        # set focus to be false
+        self.qFocus = False
+        # bind focus in and out
+        self.bind('<FocusIn>', self.onFocus)
+        self.bind('<FocusOut>', self.offFocus)
+        # bind on mouse hover and out, mEnter = mouse enter
+        self.bind('<Enter>', self.mEnter)
+        self.bind('<Leave>', self.mExit)
+    def onFocus(self, event):
+        self.configure(
+            border_color = accent,
+            fg_color = fl1
+            )
+        # variable used to make sure hover doesnt affect focus
+        self.qFocus = True
+    def offFocus(self, event):
+        self.configure(
+            border_color = fl1,
+            fg_color = fl025
+            )
+        self.qFocus = False
+    def mEnter(self, event):
+        # check to make sure widget is not focused
+        if not self.qFocus:
+            self.configure(
+                border_color  = al1,
+                fg_color = fl1
+            )
+    def mExit(self, event):
+        if not self.qFocus:
+            self.configure(
+                border_color = fl1,
+                fg_color = fl025
+            )
 
+# Right arrow button
+class arrowBtn(ck.CTkButton):
+    # w = width, h = height
+    def __init__(self, *, w=None, h=None, **kwargs):
+        ck.CTkButton.__init__(self, kwargs)
+        
+        
+# qWelcome = welcome()
 def enterUser():
     global maxLenPrompt  # this variable is the prompt that the user
     # receives when they attempt to enter more
@@ -346,4 +438,4 @@ def mainpage():
 
 
 # mainpage()
-onstart()
+# onstart()
