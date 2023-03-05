@@ -1,4 +1,5 @@
 import os  # in order to delete and create new files
+import tkinter as tk
 import customtkinter as ck
 import sqlite3 as sq  # to make it easier to type
 # converts string into array/list
@@ -104,9 +105,43 @@ class quiz():
         return self.cursor.fetchone()[0]
 
 # interface for quizzes
-
-
+class mainWindow(ck.CTkFrame):
+    def __init__(self,master, quiz, **kwargs):
+        super().__init__(master, fg_color = '#161616', **kwargs) # color will be replaced later
+        # f = frame, so fQuestion = frame question 
+        self.fQuestion = ck.CTkFrame(self, height = 100, fg_color = 'red', corner_radius = 0) # rgb colours to see frames more clearly
+        self.fOptions = ck.CTkFrame(self, fg_color = 'green', corner_radius = 0)
+        self.fBottom = ck.CTkFrame(self, height = 60, fg_color = 'blue', corner_radius = 0)
+        
+        # set grid weights
+        for i in range(3):
+            self.grid_columnconfigure(i,weight = 1)
+        self.grid_rowconfigure(0, weight = 0)
+        self.grid_rowconfigure(1, weight = 1)
+        self.grid_rowconfigure(2, weight = 0)
+        
+        # make sure frame doesnt resize to contents
+        self.fQuestion.grid_propagate(False)
+        self.fBottom.grid_propagate(False)
+        
+        # place frames
+        self.fQuestion.grid(row = 0, column = 0, sticky = 'ew', columnspan = 3)
+        self.fOptions.grid(row = 1, column = 0, sticky = 'news', columnspan = 3)
+        self.fBottom.grid(row = 2, column = 0, sticky = 'ew', columnspan = 3)
+    def fillQ(self, frame):
+        
 compSci = quiz('compSci')
+
+# test window
+root = ck.CTk()
+root.geometry('1280x720')
+main = mainWindow(root, compSci)
+main.grid(row = 0, column = 0, sticky = 'news')
+root.grid_columnconfigure(0, weight = 1)
+root.grid_rowconfigure(0,weight = 1)
+root.mainloop()
+
+
 # compSci.delete(90)
 # compSci.add(90,
 #             '"Invalid"',
