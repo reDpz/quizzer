@@ -2,8 +2,20 @@ import os  # in order to delete and create new files
 import tkinter as tk
 import customtkinter as ck
 import sqlite3 as sq  # to make it easier to type
-# converts string into array/list
+import time 
 
+# define fonts
+counter_font = (
+    'Montserrat',
+    30,
+    "bold"
+)
+
+quizName_font = (
+    'Montserrat',
+    10,
+    'normal'
+)
 
 def stringToList(inp):
     return inp[1:-1].strip().split(',')
@@ -108,6 +120,10 @@ class quiz():
 class mainWindow(ck.CTkFrame):
     def __init__(self,master, quiz, **kwargs):
         super().__init__(master, fg_color = '#161616', **kwargs) # color will be replaced later
+
+        # store quiz
+        self.quiz = quiz
+        
         # f = frame, so fQuestion = frame question 
         self.fQuestion = ck.CTkFrame(self, height = 100, fg_color = 'red', corner_radius = 0) # rgb colours to see frames more clearly
         self.fOptions = ck.CTkFrame(self, fg_color = 'green', corner_radius = 0)
@@ -124,12 +140,96 @@ class mainWindow(ck.CTkFrame):
         self.fQuestion.grid_propagate(False)
         self.fBottom.grid_propagate(False)
         
+        # place frame contents
+        self.fillQ(self.fQuestion)
+        
+        # button to increment counter
+        button   = tk.Button(
+            self.fOptions,
+            text = 'Increment',
+            command = self.counter.increment
+        )
+        button.pack()
+        
         # place frames
         self.fQuestion.grid(row = 0, column = 0, sticky = 'ew', columnspan = 3)
         self.fOptions.grid(row = 1, column = 0, sticky = 'news', columnspan = 3)
         self.fBottom.grid(row = 2, column = 0, sticky = 'ew', columnspan = 3)
+    
+    # fill question frame
     def fillQ(self, frame):
+        # configure grid for this frame
+        for i in range(2):
+            frame.grid_rowconfigure(i, weight=0)
+            frame.grid_columnconfigure(i, weight = 0)
         
+        # add counter
+        self.counter = counter(
+            frame,
+            fg_color = '#FFFFFF',
+            bg_colour = '#000000',
+            x = 100,
+            y = 100,
+            font = counter_font
+        )
+        # sticky to 'west' so that counter sticks all the way at the left.
+        self.counter.grid(column = 0, row = 0, sticky = '')
+
+        # frame containing quiz name and question
+        self.info_frame = tk.Frame(
+            frame,
+            bg = 'blue'
+        )
+        # insert frame, make sure it doesnt resize to contents
+        self.info_frame.grid(row = 0, column = 1, sticky = 'news')
+        self.info_frame.pack_propagate(False)
+
+        # add quiz name
+        name_label = tk.Label(
+            self.info_frame,
+            text = self.quiz.name,
+            bg = 'white'
+        )
+        # place label with pack method
+        name_label.pack(expand = True, fill = 'both')
+
+
+# creates a counter with a square box
+class counter(tk.Frame):
+    # x = x dimension (size) y = y dimension (size)
+    def __init__(self, master, startNum=1, *, fg_color, bg_colour, x, y, font):
+        # create container
+        tk.Frame.__init__(
+            self,
+            master,
+            bg = bg_colour,
+            width = x,
+            height = y    
+        )
+        
+        # stop frame from resizing to its contents
+        self.pack_propagate(False)
+        
+        # initialise variables, counter is the actual counter and string var is what is displayed
+        self.counter = startNum; self.counter_var = tk.StringVar(self,str(self.counter))
+
+        # create label containig StringVar
+        self.label = tk.Label(
+            self,
+            textvariable = self.counter_var,
+            fg = fg_color,
+            bg = bg_colour,
+            font = font
+        )
+
+        # pack frame
+        self.label.pack(expand=True)
+    
+    def increment(self, step = 1):
+        self.counter += step
+        self.counter_var.set(str(self.counter))
+
+
 compSci = quiz('compSci')
 
 # test window
