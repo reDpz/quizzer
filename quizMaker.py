@@ -3,6 +3,64 @@ import tkinter as tk
 import customtkinter as ck
 import sqlite3 as sq  # to make it easier to type
 import time 
+import json as j
+
+# setting empty variables as colours to avoid problems in VSC
+accent = ''
+pBG = ''
+pFG = ''
+fl025 = ''
+fl1 = ''
+fl2 = ''
+al1 = ''
+
+class colourScheme:
+    def __init__(self, dir):
+        self.dir = dir
+        self.default = {
+            'accent':'#9747FF',
+            'pBG':'#1B1B1B', # background
+            'pFG':'#FFFFFF', # foreground (e.g. text)
+            'fl025':'#262626', # focus level 0.25 (more highlighted background)
+            'fl1':'#373737', # focus level 1 (more highlighted fl0.25)
+            'fl2':'#585858', # focus level 2 (more highligted fl1)
+            'al1':'#AE98CB' # accent level 1 (more highlted acccent)
+        }
+        self.scheme = {}
+        self.schemeValidate()
+        globals().update(self.scheme)
+    def schemeValidate(self):
+        # basic check to make sure scheme file exists
+        if not os.path.exists(self.dir):
+            self.createDefault()
+        else:
+            with open(self.dir, 'r') as schemeFile:
+                try:
+                    self.scheme = j.load(schemeFile)
+                except Exception as e:
+                    # print error instead of crashing
+                    print('Could not load scheme from', self.dir,'\nError:',e)
+                    # reset scheme as this means that self.dir is corrupt
+                    self.createDefault()
+                finally:
+                    # if file has loaded successfully it now needs to be valid
+                    if not self.validity:
+                        self.createDefault()
+    def createDefault(self):
+        # this creates a default schemes.json file
+        try:
+            with open(self.dir,'w+') as schemeFile:
+                schemeFile.write(j.dumps(self.default, indent = 4))
+        except Exception as e:
+            # if self.dir does not exist (e.g. first startup) it may fail to create scheme file.
+            print('Could create default scheme file at', self.dir, '\nError:', e)
+        self.scheme = self.default
+    def validity(self):
+        for key in self.default:
+            if key not in self.scheme:
+                return False
+        return True
+colours = colourScheme('data/scheme.json')
 
 # define fonts
 counter_font = (
@@ -173,7 +231,7 @@ class mainWindow(ck.CTkFrame):
             font = counter_font
         )
         # sticky to 'west' so that counter sticks all the way at the left.
-        self.counter.grid(column = 0, row = 0, sticky = '')
+        self.counter.grid(column = 0, row = 0, sticky = 'w')
 
         # frame containing quiz name and question
         self.info_frame = tk.Frame(
@@ -229,14 +287,84 @@ class counter(tk.Frame):
         self.counter += step
         self.counter_var.set(str(self.counter))
 
+# Button to select option from quiz
+class optionButton(ck.CTkButton):
+
+    def __init__(self, master, text):
+        ck.CTkButton.__init__(
+            self,
+            master,
+            text = text,
+            command = self.button_press,
+            fg_color = fl025,
+            text_color = pFG,
+            corner_radius = 15,
+            border_width = 2,  # creating a border and setting border to be same colour
+            border_color = fl025,  # as the background, therefore making it invisible.
+            hover = False,
+        )
+        # state of the button (toggle)
+        self.state = False  # false = off, true = on
+
+        # binding hover and click events
+        
+        # set pressed status to be false
+        self.pressed = False
+        # hover
+        self.bind('<Enter>', self.on_hover)
+        self.bind('<Leave>', self.out_hover)
+
+        # hold click
+        self.bind('<ButtonPress-1>', self.on_click)
+        self.bind('<ButtonRelease-1>', self.off_click)
+
+    # change colour on hover
+    def on_hover(self, event):
+        if self.pressed == False:
+            self.configure(
+                border_color = al1,
+                fg_color = fl1,
+                )
+
+    def out_hover(self,event):
+        if self.pressed == False:
+            self.configure(
+                border_color = fl025,
+                fg_color = fl025
+                )
+
+    # change colour on button click
+    def on_click(self, event):
+        self.pressed = True
+        self.configure(
+            border_color = pFG,
+            fg_color = pFG,
+            text_color = pBG,
+        )
+    
+    def off_click(self,event):
+        self.pressed = False
+        self.configure(
+            border_color = fl025,
+            fg_color = fl025,
+            text_color = pFG,
+        )
+
+    # command to execute on button press
+    def button_press(self):
+        # toggle state
+        self.state = not self.state
+        
+
 
 compSci = quiz('compSci')
+
 
 # test window
 root = ck.CTk()
 root.geometry('1280x720')
-main = mainWindow(root, compSci)
-main.grid(row = 0, column = 0, sticky = 'news')
+main = optionButton(root, 'Hello world')
+main.grid(row = 0, column = 0, sticky = 'news', padx = 10, pady =10)
 root.grid_columnconfigure(0, weight = 1)
 root.grid_rowconfigure(0,weight = 1)
 root.mainloop()
