@@ -295,7 +295,6 @@ class optionButton(ck.CTkButton):
             self,
             master,
             text = text,
-            command = self.button_press,
             fg_color = fl025,
             text_color = pFG,
             corner_radius = 15,
@@ -306,6 +305,10 @@ class optionButton(ck.CTkButton):
         # state of the button (toggle)
         self.state = False  # false = off, true = on
 
+        
+        #text wrapping
+        self.configure(wraplength = self.winfo_width())
+        
         # binding hover and click events
         
         # set pressed status to be false
@@ -320,14 +323,14 @@ class optionButton(ck.CTkButton):
 
     # change colour on hover
     def on_hover(self, event):
-        if self.pressed == False:
+        if not self.pressed and not self.state:
             self.configure(
                 border_color = al1,
                 fg_color = fl1,
                 )
 
     def out_hover(self,event):
-        if self.pressed == False:
+        if not self.pressed and not self.state:
             self.configure(
                 border_color = fl025,
                 fg_color = fl025
@@ -349,12 +352,25 @@ class optionButton(ck.CTkButton):
             fg_color = fl025,
             text_color = pFG,
         )
+        self.button_press()
 
     # command to execute on button press
     def button_press(self):
         # toggle state
         self.state = not self.state
-        
+        print(f'state: {self.state}')
+        if self.state:
+            self.configure(
+                border_color = accent,
+                fg_color = accent,
+                text_color = pFG,
+            )
+        else:
+            self.configure(
+                border_color = al1,
+                fg_color = fl1,
+                text_color = pFG,
+            )
 
 
 compSci = quiz('compSci')
@@ -363,7 +379,7 @@ compSci = quiz('compSci')
 # test window
 root = ck.CTk()
 root.geometry('1280x720')
-main = optionButton(root, 'Hello world')
+main = optionButton(root, 'very long sentence test, test, test, test, test, test, test, test ')
 main.grid(row = 0, column = 0, sticky = 'news', padx = 10, pady =10)
 root.grid_columnconfigure(0, weight = 1)
 root.grid_rowconfigure(0,weight = 1)
