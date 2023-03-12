@@ -288,90 +288,85 @@ class counter(tk.Frame):
         self.counter_var.set(str(self.counter))
 
 # Button to select option from quiz
-class optionButton(ck.CTkButton):
+class optionButton(ck.CTkFrame):
 
     def __init__(self, master, text):
-        ck.CTkButton.__init__(
+        ck.CTkFrame.__init__(
             self,
             master,
-            text = text,
             fg_color = fl025,
-            text_color = pFG,
-            corner_radius = 15,
-            border_width = 2,  # creating a border and setting border to be same colour
-            border_color = fl025,  # as the background, therefore making it invisible.
-            hover = False,
+            border_width = 2,
+            border_color = accent,
         )
-        # state of the button (toggle)
-        self.state = False  # false = off, true = on
 
-        
-        #text wrapping
-        self.configure(wraplength = self.winfo_width())
-        
-        # binding hover and click events
-        
-        # set pressed status to be false
-        self.pressed = False
+        # create label containing text
+        self.text = tk.Label(
+            self,
+            text = text,
+            fg = pFG,
+            bg = fl025,
+        )
+        # pack label
+        self.text.pack(expand = True, fill = 'both', padx = 10, pady = 10)
+
+        # set up wrapping
+        self.text.bind('<Configure>', lambda e: self.text.config(wraplength=self.text.winfo_width()))
+
+        # interactions
+        self.state, self.pressed = False, False
+
         # hover
         self.bind('<Enter>', self.on_hover)
-        self.bind('<Leave>', self.out_hover)
+        self.bind('<Leave>', self.off_hover)
 
-        # hold click
+        # click
         self.bind('<ButtonPress-1>', self.on_click)
         self.bind('<ButtonRelease-1>', self.off_click)
 
-    # change colour on hover
+    # styling
+    # this function correctly applies the colour to the label
+    def change_style(self, *, border_color = None, fg_color = None, ):
+        # error checking
+        if fg_color is None and border_color is None:
+            raise Exception('change_style function requires at least 1 input')
+
+        if fg_color is None:
+            self.configure(border_color = border_color)
+        else:  #assume that it has received another input
+            self.configure(fg_color = fg_color)
+            self.text.configure(bg = fg_color)
+            if fg_color == pFG:  # the text is only black when background is white
+                self.text.configure(fg = pBG)
+            else:
+                self.text.configure(fg = pFG)
+    
+    # hover interactions
     def on_hover(self, event):
-        if not self.pressed and not self.state:
-            self.configure(
-                border_color = al1,
-                fg_color = fl1,
-                )
+        if not(self.state or self.pressed):
+            self.change_style(border_color = al1, fg_color = fl1)
+            print('Started hovering')
+    
+    def off_hover(self, event):
+        if not(self.state or self.pressed):
+            self.change_style(border_color = fl025, fg_color = fl025)
+            print('Stopped hovering')
 
-    def out_hover(self,event):
-        if not self.pressed and not self.state:
-            self.configure(
-                border_color = fl025,
-                fg_color = fl025
-                )
-
-    # change colour on button click
+    # click interactions
     def on_click(self, event):
         self.pressed = True
-        self.configure(
-            border_color = pFG,
-            fg_color = pFG,
-            text_color = pBG,
-        )
-    
-    def off_click(self,event):
+        self.change_style(border_color = pFG, fg_color = pFG)
+        print('Started clicking')
+
+    def off_click(self, event):
         self.pressed = False
-        self.configure(
-            border_color = fl025,
-            fg_color = fl025,
-            text_color = pFG,
-        )
         self.button_press()
+        print('Stopped clicking')
 
-    # command to execute on button press
     def button_press(self):
-        # toggle state
         self.state = not self.state
-        print(f'state: {self.state}')
         if self.state:
-            self.configure(
-                border_color = accent,
-                fg_color = accent,
-                text_color = pFG,
-            )
-        else:
-            self.configure(
-                border_color = al1,
-                fg_color = fl1,
-                text_color = pFG,
-            )
-
+            self.change_style(border_color = accent, fg_color = accent)
+        print(f'Current state: {self.state}')
 
 compSci = quiz('compSci')
 
