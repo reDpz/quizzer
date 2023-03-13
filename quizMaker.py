@@ -307,7 +307,13 @@ class optionButton(ck.CTkButton):
 
         
         #text wrapping
-        self.bind('<Configure>', lambda e: self._text_label.configure(wraplength=self.winfo_width()))
+        self.bind(
+            '<Configure>',
+            lambda e:
+            self._text_label.configure(
+                wraplength=self.winfo_width() - 25
+                )
+            )
         
         # binding hover and click events
         
@@ -372,15 +378,48 @@ class optionButton(ck.CTkButton):
                 text_color = pFG,
             )
 
+def placeButtons(master, textList):
+    # grid list contains all placements, button lists will contain
+    # all the button objects
+    gridList = allignButtons(len(textList)); buttonList = []
+    for index, text in enumerate(textList):
+        buttonList.append(optionButton(master, text))
+        # place buttons
+        buttonList[index].grid(
+            row = gridList[index][0],
+            column = gridList[index][1],
+            )
+    # set grid layout
+    master.grid_columnconfigure(0, weight = 1)
+    master.grid_columnconfigure(1, weight = 1)
+    # iterate row configuration
+    # divmod gives quotient and remainder
+    for i in range(
+        sum(
+            divmod(len(textList), 2)
+        )
+    ):
+        master.grid_rowconfigure(i)
+
+    
+def allignButtons(numButtons):
+    # i = column, j = row
+    j = 0; output = []
+    while numButtons > 0:
+        for i in range(2):
+            output.append([i,j])
+            # decrement numButtons
+            numButtons -= 1
+        # increment row
+        j += 1
+    return output
 
 compSci = quiz('compSci')
-
-
+        
 # test window
 root = ck.CTk()
 root.geometry('1280x720')
-main = optionButton(root, 'very long sentence test, test, test, test, test, test, test, test ')
-main.grid(row = 0, column = 0, sticky = 'news', padx = 10, pady =10, ipadx = 10, ipady = 10)
+placeButtons(root, ['text1','text2','text3'])
 root.grid_columnconfigure(0, weight = 1)
 root.grid_rowconfigure(0,weight = 1)
 root.mainloop()
