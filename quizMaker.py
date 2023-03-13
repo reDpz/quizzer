@@ -307,7 +307,7 @@ class optionButton(ck.CTkButton):
 
         
         #text wrapping
-        self.configure(wraplength = self.winfo_width())
+        self.bind('<Configure>', lambda e: self._text_label.configure(wraplength=self.winfo_width()))
         
         # binding hover and click events
         
@@ -380,7 +380,7 @@ compSci = quiz('compSci')
 root = ck.CTk()
 root.geometry('1280x720')
 main = optionButton(root, 'very long sentence test, test, test, test, test, test, test, test ')
-main.grid(row = 0, column = 0, sticky = 'news', padx = 10, pady =10)
+main.grid(row = 0, column = 0, sticky = 'news', padx = 10, pady =10, ipadx = 10, ipady = 10)
 root.grid_columnconfigure(0, weight = 1)
 root.grid_rowconfigure(0,weight = 1)
 root.mainloop()
